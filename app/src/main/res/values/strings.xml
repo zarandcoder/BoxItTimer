@@ -4,5 +4,10 @@
     <string name="fight_time">Set your fight time</string>
     <string name="rest_time">Set your rest time</string>
     <string name="prep_time">Set number of rounds</string>
+    <string name="start">Start</string>
+    <string name="get_ready">Get Ready!</string>
+    <string name="fight">Fight!</string>
+    <string name="rest">Rest!</string>
+    <string name="time_paused">Time paused…</string>
 
 </resources>
