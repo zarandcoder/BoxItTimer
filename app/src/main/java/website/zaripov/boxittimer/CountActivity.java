@@ -28,6 +28,7 @@ public class CountActivity extends AppCompatActivity {
 
         //Boxing bell sound
         final MediaPlayer bellSound = MediaPlayer.create(this, R.raw.sample);
+        final MediaPlayer countDownFiveSecs = MediaPlayer.create(this, R.raw.countdown_sample);
         final TextView timeCounter = findViewById(R.id.textView6);
 
         Intent intent = getIntent();
@@ -67,6 +68,9 @@ public class CountActivity extends AppCompatActivity {
                                 //TODO Parse time as String
                                 millisLeft = millisUntilFinished;
                                 timeCounter.setText(String.valueOf(millisLeft / 1000));
+                                if(timeCounter.getText().toString().equals("6")) {
+                                    countDownFiveSecs.start();
+                                }
                             }
                         }
 
@@ -87,6 +91,9 @@ public class CountActivity extends AppCompatActivity {
                                 //TODO Parse time as String
                                 millisLeft = millisUntilFinished;
                                 timeCounter.setText(String.valueOf(millisLeft / 1000));
+                                if(timeCounter.getText().toString().equals("6")) {
+                                    countDownFiveSecs.start();
+                                }
                             }
                         }
 
