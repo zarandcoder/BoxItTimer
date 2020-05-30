@@ -7,16 +7,17 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class CountActivity extends AppCompatActivity {
     private static String TAG = "xx Count Activity";
-    private Long millisLeft = null;
-    private Long millisOnPause = null;
-
-
+    private final long TIME_INTERVAL = 1000;
+    private TextView currentState;
+    private boolean pauseActivated = false;
+    private boolean resumeActivated = false;
+    private boolean cancelActivated = false;
+    private long millisLeft = 0;
 
     public CountActivity() {}
 
@@ -39,51 +40,68 @@ public class CountActivity extends AppCompatActivity {
 
         final String roundStr = intent.getStringExtra("rounds");
 
-
-
         timeCounter.setText(fightTimeStrPretty);
 
-        ImageButton playBtn = findViewById(R.id.imageButton2);
-        ImageButton pauseBtn = findViewById(R.id.imageButton);
-        ImageButton stopBtn = findViewById(R.id.imageButton3);
-
-        final CountDownTimer timer;
-        if(fightTimeStr != null) {
-
-            //If user press Pause Button we have to save the time
-            long fightTime;
-            if(millisOnPause == null) {
-               fightTime = Integer.parseInt(fightTimeStr) * 1000;
-            } else fightTime = millisOnPause;
-
-            timer = new CountDownTimer(fightTime,
-                    1000) {
-
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    //TODO Parse time as String
-                    millisLeft = millisUntilFinished;
-                    timeCounter.setText(String.valueOf(millisLeft / 1000));
-                }
-
-                @Override
-                public void onFinish() {
-                    TextView currentState = findViewById(R.id.textView5);
-                    currentState.setText(R.string.rest);
-                    bellSound.start();
-                }
-            };
-        } else throw new NullPointerException("Problem occured");
-
+        final ImageButton playBtn = findViewById(R.id.imageButton2);
+        final ImageButton pauseBtn = findViewById(R.id.imageButton);
+        pauseBtn.setEnabled(false);
+        final ImageButton stopBtn = findViewById(R.id.imageButton3);
 
         //Event listeners for 3 Buttons
         playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pauseActivated = false;
+                playBtn.setEnabled(false);
+                pauseBtn.setEnabled(true);
+
+                if(fightTimeStr != null && !resumeActivated) {
+                    //If user press Pause Button we have to save the time
+                    long fightTime = Integer.parseInt(fightTimeStr) * 1000;
+                    new CountDownTimer(fightTime, TIME_INTERVAL) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            if(pauseActivated || cancelActivated) {
+                                cancel();
+                            } else {
+                                //TODO Parse time as String
+                                millisLeft = millisUntilFinished;
+                                timeCounter.setText(String.valueOf(millisLeft / 1000));
+                            }
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            bellSound.start();
+                            TextView currentState = findViewById(R.id.textView5);
+                            currentState.setText(R.string.rest);
+                        }
+                    }.start();
+                } else {
+                    new CountDownTimer(millisLeft, TIME_INTERVAL) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            if(pauseActivated || cancelActivated) {
+                                cancel();
+                            } else {
+                                //TODO Parse time as String
+                                millisLeft = millisUntilFinished;
+                                timeCounter.setText(String.valueOf(millisLeft / 1000));
+                            }
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            bellSound.start();
+                            TextView currentState = findViewById(R.id.textView5);
+                            currentState.setText(R.string.rest);
+                        }
+                    }.start();
+                }
+
                 bellSound.start();
-                TextView currentState = findViewById(R.id.textView5);
+                currentState = findViewById(R.id.textView5);
                 currentState.setText(getString(R.string.fight));
-                timer.start();
             }
         });
 
@@ -91,10 +109,14 @@ public class CountActivity extends AppCompatActivity {
         pauseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView currentState = findViewById(R.id.textView5);
-                millisOnPause = millisLeft;
-                timer.cancel();
+                pauseActivated = true;
+                resumeActivated = true;
+
+                currentState = findViewById(R.id.textView5);
                 currentState.setText(getString(R.string.time_paused));
+
+                playBtn.setEnabled(true);
+                pauseBtn.setEnabled(false);
             }
         });
 
@@ -103,7 +125,7 @@ public class CountActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                timer.cancel();
+                cancelActivated = true;
                 Intent intent1 = new Intent(CountActivity.this, MainActivity.class);
                 startActivity(intent1);
             }
