@@ -11,5 +11,8 @@
     <string name="rest">Rest!</string>
     <string name="time_paused">Time paused…</string>
     <string name="finish">Finished!!!</string>
+    <string name="play_btn">Start fight time</string>
+    <string name="pause_btn">Pause fight time</string>
+    <string name="stop_btn">Stop fight time</string>
 
 </resources>

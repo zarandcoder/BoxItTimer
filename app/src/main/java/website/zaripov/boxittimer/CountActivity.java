@@ -48,9 +48,9 @@ public class CountActivity extends AppCompatActivity {
         // Countdown sound effect
         countDownFiveSecs = MediaPlayer.create(this, R.raw.countdown_sample);
         // Main time counter textview
-        timeCounter = findViewById(R.id.textView6);
+        timeCounter = findViewById(R.id.id_current_round_time_text);
 
-        roundNo = findViewById(R.id.textView10);
+        roundNo = findViewById(R.id.id_current_round);
 
         final Intent intent = getIntent();
         fightTime = intent.getIntExtra("fightTime", 3);
@@ -66,10 +66,10 @@ public class CountActivity extends AppCompatActivity {
         roundNo.setText(roundStr);
 
 
-        final ImageButton playBtn = findViewById(R.id.imageButton2);
-        final ImageButton pauseBtn = findViewById(R.id.imageButton);
+        final ImageButton playBtn = findViewById(R.id.id_image_play_button);
+        final ImageButton pauseBtn = findViewById(R.id.id_image_pause_button);
         pauseBtn.setEnabled(false);
-        final ImageButton stopBtn = findViewById(R.id.imageButton3);
+        final ImageButton stopBtn = findViewById(R.id.id_image_stop_button);
 
         //Event listeners for 3 Buttons
         playBtn.setOnClickListener(new View.OnClickListener() {
@@ -83,7 +83,7 @@ public class CountActivity extends AppCompatActivity {
                 playBtn.setEnabled(false);
                 pauseBtn.setEnabled(true);
 
-                currentState = findViewById(R.id.textView5);
+                currentState = findViewById(R.id.id_current_status_text);
                 currentState.setText(getString(R.string.fight));
 
                 // Countdown timer starts
@@ -101,7 +101,7 @@ public class CountActivity extends AppCompatActivity {
                 pauseActivated = true;
                 resumeActivated = true;
 
-                currentState = findViewById(R.id.textView5);
+                currentState = findViewById(R.id.id_current_status_text);
                 currentState.setText(getString(R.string.time_paused));
 
                 playBtn.setEnabled(true);
@@ -163,7 +163,7 @@ public class CountActivity extends AppCompatActivity {
 
                 @Override
                 public void onFinish() {
-                    currentState = findViewById(R.id.textView5);
+                    currentState = findViewById(R.id.id_current_status_text);
                     currentState.setText(R.string.rest);
                     bellSound.start();
                     startRest(restTime);
@@ -189,7 +189,7 @@ public class CountActivity extends AppCompatActivity {
                 public void onFinish() {
                     String restTimeStrPretty = restTime + ":00";
                     timeCounter.setText(restTimeStrPretty);
-                    currentState = findViewById(R.id.textView5);
+                    currentState = findViewById(R.id.id_current_status_text);
                     currentState.setText(R.string.rest);
                     bellSound.start();
                     startRest(restTime);

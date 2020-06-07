@@ -7,7 +7,7 @@
     tools:context=".CountActivity">
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/id_current_status_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/id_current_round_time_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="140dp"
@@ -28,30 +28,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/id_current_status_text" />
 
     <ImageButton
-        android:id="@+id/imageButton3"
+        android:id="@+id/id_image_stop_button"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginStart="44dp"
         android:layout_marginBottom="52dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageButton"
-        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+        app:layout_constraintStart_toEndOf="@+id/id_image_pause_button"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
+        android:contentDescription="@string/stop_btn" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/id_image_play_button"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginEnd="44dp"
         android:layout_marginBottom="52dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton"
-        app:srcCompat="@android:drawable/ic_media_play" />
+        app:layout_constraintEnd_toStartOf="@+id/id_image_pause_button"
+        app:srcCompat="@android:drawable/ic_media_play"
+        android:contentDescription="@string/play_btn" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/id_image_pause_button"
         android:layout_width="79dp"
         android:layout_height="71dp"
         android:layout_marginBottom="52dp"
@@ -59,10 +61,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_media_pause" />
+        app:srcCompat="@android:drawable/ic_media_pause"
+        android:contentDescription="@string/pause_btn" />
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/id_current_round"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="52dp"
@@ -70,7 +73,7 @@
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/id_current_status_text" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
