@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/id_main_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/id_fight_time_input_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="92dp"
@@ -33,7 +33,7 @@
 
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/id_rest_time_input_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="180dp"
@@ -45,7 +45,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/id_round_input_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="268dp"
@@ -57,7 +57,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/id_start_button"
         android:layout_width="209dp"
         android:layout_height="76dp"
         android:layout_marginTop="432dp"
@@ -67,59 +67,71 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <SeekBar
-        android:id="@+id/seekBar"
+        android:id="@+id/id_fight_time_seekbar"
         android:layout_width="195dp"
         android:layout_height="25dp"
         android:layout_marginTop="128dp"
+        android:max="15"
+        android:progress="3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.175"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <SeekBar
-        android:id="@+id/seekBar3"
+        android:id="@+id/id_rest_time_seekbar"
         android:layout_width="195dp"
         android:layout_height="25dp"
         android:layout_marginTop="216dp"
+        android:max="5"
+        android:progress="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.175"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <SeekBar
-        android:id="@+id/seekBar4"
+        android:id="@+id/id_round_seekbar"
         android:layout_width="195dp"
         android:layout_height="25dp"
         android:layout_marginTop="304dp"
+        android:max="12"
+        android:progress="3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.18"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/id_fight_time_text"
         android:layout_width="107dp"
         android:layout_height="56dp"
         android:layout_marginTop="92dp"
         android:layout_marginEnd="36dp"
+        android:textSize="30sp"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/id_rest_time_text"
         android:layout_width="107dp"
         android:layout_height="56dp"
         android:layout_marginTop="180dp"
         android:layout_marginEnd="36dp"
+        android:textSize="30sp"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView9"
+        android:id="@+id/id_round_text"
         android:layout_width="107dp"
         android:layout_height="56dp"
         android:layout_marginTop="272dp"
         android:layout_marginEnd="36dp"
+        android:textSize="30sp"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
