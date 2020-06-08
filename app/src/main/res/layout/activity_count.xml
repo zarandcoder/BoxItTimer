@@ -41,6 +41,17 @@
         app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
         android:contentDescription="@string/stop_btn" />
 
+    <TextView
+        android:id="@+id/id_current_round"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:text="@string/round"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/id_current_status_text" />
+
     <ImageButton
         android:id="@+id/id_image_play_button"
         android:layout_width="70dp"
@@ -63,17 +74,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_media_pause"
         android:contentDescription="@string/pause_btn" />
-
-    <TextView
-        android:id="@+id/id_current_round"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
-        android:text="@string/round"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/id_current_status_text" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

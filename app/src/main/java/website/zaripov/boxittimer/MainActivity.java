@@ -9,11 +9,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
     private static String TAG = "xx Main Activity";
-
+    private String fightTime;
+    private String restTime;
     public MainActivity() {}
 
     @Override
@@ -37,12 +39,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         final TextView fightTimeText = findViewById(R.id.id_fight_time_text);
-        String sFightTime = fightTimeBar.getProgress() + ":00";
-        fightTimeText.setText(sFightTime);
+        fightTime = fightTimeBar.getProgress() + ":00";
+        fightTimeText.setText(fightTime);
 
         final TextView restTimeText = findViewById(R.id.id_rest_time_text);
-        String sRestTime = restTimeBar.getProgress() + ":00";
-        restTimeText.setText(sRestTime);
+        restTime = restTimeBar.getProgress() + ":00";
+        restTimeText.setText(restTime);
 
         final TextView roundsText = findViewById(R.id.id_round_text);
         roundsText.setText(String.valueOf(roundsBar.getProgress()));
@@ -50,8 +52,12 @@ public class MainActivity extends AppCompatActivity {
         fightTimeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                String s = progress + ":00";
-                fightTimeText.setText(s);
+                if(progress % 2 == 0) {
+                    fightTime = progress/2 + ":00";
+                } else {
+                    fightTime = progress/2 + ":30";
+                }
+                fightTimeText.setText(fightTime);
             }
 
             @Override
@@ -68,8 +74,12 @@ public class MainActivity extends AppCompatActivity {
         restTimeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                String s = progress + ":00";
-                restTimeText.setText(s);
+                if(progress % 2 == 0) {
+                    restTime = progress/2 + ":00";
+                } else {
+                    restTime = progress/2 + ":30";
+                }
+                restTimeText.setText(restTime);
             }
 
             @Override
@@ -100,19 +110,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         Button startBtn = findViewById(R.id.id_start_button);
         startBtn.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-
-                //Check values first
-                Intent intent = new Intent(MainActivity.this, CountActivity.class);
-                intent.putExtra("fightTime", fightTimeBar.getProgress());
-                intent.putExtra("restTime", restTimeBar.getProgress());
-                intent.putExtra("rounds", roundsBar.getProgress());
-
-                startActivity(intent);
+                if(fightTime.equals("0:00") || restTime.equals("0:00") || roundsBar.getProgress() == 0) {
+                    Toast.makeText(getApplicationContext(), "Value can't be 0!", Toast.LENGTH_LONG).show();
+                } else {
+                    //Check values first
+                    final Intent intent = new Intent(MainActivity.this, CountActivity.class);
+                    intent.putExtra("fightTime", ((float)fightTimeBar.getProgress())/2);
+                    intent.putExtra("restTime", ((float)restTimeBar.getProgress())/2);
+                    intent.putExtra("rounds", roundsBar.getProgress());
+                    intent.putExtra("sFightTime", fightTime);
+                    intent.putExtra("sRestTime", restTime);
+                    startActivity(intent);
+                }
             }
         });
     }

@@ -19,10 +19,12 @@ public class CountActivity extends AppCompatActivity {
 
     private int currRound = 1;
     private final long TIME_INTERVAL = 1000;
-    private long millisLeft = 0;
-    private boolean pauseActivated = false;
-    private boolean resumeActivated = false;
-    private boolean cancelActivated = false;
+    private long millisLeftFighting = 0;
+    private long millisLeftResting = 0;
+
+    private boolean isPauseActivated = false;
+    private boolean isCancelActivated = false;
+    private boolean isRestTime = false;
 
     private TextView currentState;
 
@@ -30,11 +32,25 @@ public class CountActivity extends AppCompatActivity {
     private MediaPlayer bellSound;
     private TextView timeCounter;
     private TextView roundNo;
+    private CountDownTimer timerFight;
+    private CountDownTimer timerRest;
 
-    private int fightTime;
-    private int restTime;
+    private float fightTimeSec;
+    private float restTimeSec;
     private int rounds;
 
+
+    @Override
+    public void onBackPressed() {
+        CountActivity.super.onBackPressed();
+        if(timerFight != null) {
+            timerFight.cancel();
+        }
+        if(timerRest != null) {
+            timerRest.cancel();
+        }
+        finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,21 +59,32 @@ public class CountActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_count);
 
+        final Intent intent = getIntent();
+
+        final ImageButton playBtn = findViewById(R.id.id_image_play_button);
+        final ImageButton pauseBtn = findViewById(R.id.id_image_pause_button);
+        pauseBtn.setEnabled(false);
+        final ImageButton stopBtn = findViewById(R.id.id_image_stop_button);
+
         //Boxing bell sound effect
         bellSound = MediaPlayer.create(this, R.raw.sample);
         // Countdown sound effect
         countDownFiveSecs = MediaPlayer.create(this, R.raw.countdown_sample);
         // Main time counter textview
         timeCounter = findViewById(R.id.id_current_round_time_text);
+        // Current state - Fight, Rest, Finished...
+        currentState = findViewById(R.id.id_current_status_text);
 
         roundNo = findViewById(R.id.id_current_round);
 
-        final Intent intent = getIntent();
-        fightTime = intent.getIntExtra("fightTime", 3);
-        restTime = intent.getIntExtra("restTime", 1);
-        rounds = intent.getIntExtra("rounds", 5);
+        fightTimeSec = intent.getFloatExtra("fightTime", 0);
+        restTimeSec = intent.getFloatExtra("restTime", 0);
+        rounds = intent.getIntExtra("rounds", 0);
 
-        String timeCounterStr = fightTime + ":00";
+        millisLeftFighting = (long) (fightTimeSec * 60 * 1000);
+        millisLeftResting = (long) (restTimeSec * 60 * 1000);
+
+        String timeCounterStr = intent.getStringExtra("sFightTime");
         timeCounter.setText(timeCounterStr);
 
         //Round X of Y
@@ -65,43 +92,40 @@ public class CountActivity extends AppCompatActivity {
         String roundStr = String.format(s, currRound, rounds);
         roundNo.setText(roundStr);
 
-
-        final ImageButton playBtn = findViewById(R.id.id_image_play_button);
-        final ImageButton pauseBtn = findViewById(R.id.id_image_pause_button);
-        pauseBtn.setEnabled(false);
-        final ImageButton stopBtn = findViewById(R.id.id_image_stop_button);
-
-        //Event listeners for 3 Buttons
+        /*********************Event listeners for 3 Buttons***************************************/
         playBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "CountActivity: playBtn clicked");
+                bellSound.start();
 
-                pauseActivated = false;
+                isPauseActivated = false;
 
                 playBtn.setEnabled(false);
                 pauseBtn.setEnabled(true);
 
-                currentState = findViewById(R.id.id_current_status_text);
-                currentState.setText(getString(R.string.fight));
-
                 // Countdown timer starts
-                startFight(fightTime);
+                if(!isRestTime) {
+                    startFight();
+                } else {
+                    startRest();
+                }
             }
         });
-
 
         pauseBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "CountActivity: pauseBtn clicked");
+                bellSound.pause();
+                if(millisLeftFighting/1000 < 6 || millisLeftResting/1000 < 6) {
+                    countDownFiveSecs.pause();
+                }
 
-                pauseActivated = true;
-                resumeActivated = true;
+                isPauseActivated = true;
 
-                currentState = findViewById(R.id.id_current_status_text);
                 currentState.setText(getString(R.string.time_paused));
 
                 playBtn.setEnabled(true);
@@ -115,13 +139,95 @@ public class CountActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "CountActivity: stopBtn clicked");
-                cancelActivated = true;
+                isCancelActivated = true;
+                isPauseActivated = false;
+
+                playBtn.setEnabled(false);
+                pauseBtn.setEnabled(false);
+                stopBtn.setEnabled(false);
+
                 final Intent intent1 = new Intent(CountActivity.this, MainActivity.class);
                 startActivity(intent1);
             }
         });
+        /*********************End Event listeners for 3 Buttons***************************************/
     }
 
+
+    private void startFight() {
+        // Set title to "Fight!"
+        currentState.setText(getString(R.string.fight));
+
+        // Set current fight round title
+        String s = getResources().getString(R.string.round);
+        String roundStr = String.format(s, currRound, rounds);
+        roundNo.setText(roundStr);
+
+        //If user press Pause Button we have to save the time
+        timerFight = new CountDownTimer(millisLeftFighting, TIME_INTERVAL) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                if (isPauseActivated || isCancelActivated) {
+                    cancel();
+                } else {
+                    millisLeftFighting = millisUntilFinished;
+                    String timeLeft = renderMinsAndSecs(millisLeftFighting);
+                    timeCounter.setText(timeLeft);
+                    if (millisLeftFighting/1000 == 6) {
+                        countDownFiveSecs.start();
+                    }
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                millisLeftFighting = (long) (fightTimeSec * 60 * 1000);
+                isRestTime = true;
+                startRest();
+            }
+        }.start();
+    }
+
+    private void startRest() {
+        // Set title to "Rest!"
+        currentState.setText(R.string.rest);
+
+        if(currRound == rounds) {
+            currentState.setText(getString(R.string.finish));
+            finish();
+        } else {
+            timerRest = new CountDownTimer(millisLeftResting, TIME_INTERVAL) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    if (isPauseActivated || isCancelActivated) {
+                        cancel();
+                    } else {
+                        millisLeftResting = millisUntilFinished;
+                        String timeLeft = renderMinsAndSecs(millisLeftResting);
+                        timeCounter.setText(timeLeft);
+                        if (millisLeftResting/1000 == 6) {
+                            countDownFiveSecs.start();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFinish() {
+                    millisLeftResting = (long) (restTimeSec * 60 * 1000);
+                    bellSound.start();
+                    currRound++;
+                    isRestTime = false;
+                    startFight();
+                }
+            }.start();
+        }
+    }
+
+    /**
+     * Helper function to pretify milisecons to minutes and seconds
+     * and return them formated to render on the screen.
+     */
     private String renderMinsAndSecs(long millis) {
         String minutes = String.valueOf(((millis / 1000) % 3600) / 60);
         String seconds = String.valueOf((millis / 1000) % 60);
@@ -130,100 +236,5 @@ public class CountActivity extends AppCompatActivity {
             seconds = "0" + seconds;
         }
         return String.format("%s:%s", minutes, seconds);
-    }
-
-    private void startFight(int fightTime) {
-
-        // Set title to "Fight!"
-        currentState.setText(getString(R.string.fight));
-        bellSound.start();
-
-        // Set current fight round title
-        String s = getResources().getString(R.string.round);
-        String roundStr = String.format(s, currRound, rounds);
-        roundNo.setText(roundStr);
-
-        if (!resumeActivated) {
-            //If user press Pause Button we have to save the time
-            long lFightTime = fightTime * 60 * 1000; //From min to milisec
-            new CountDownTimer(lFightTime, TIME_INTERVAL) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    if (pauseActivated || cancelActivated) {
-                        cancel();
-                    } else {
-                        millisLeft = millisUntilFinished;
-                        String timeLeft = renderMinsAndSecs(millisLeft);
-                        timeCounter.setText(timeLeft);
-                        if (timeLeft.equals("0:06")) {
-                            countDownFiveSecs.start();
-                        }
-                    }
-                }
-
-                @Override
-                public void onFinish() {
-                    currentState = findViewById(R.id.id_current_status_text);
-                    currentState.setText(R.string.rest);
-                    bellSound.start();
-                    startRest(restTime);
-                }
-            }.start();
-        } else {
-            new CountDownTimer(millisLeft, TIME_INTERVAL) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    if (pauseActivated || cancelActivated) {
-                        cancel();
-                    } else {
-                        millisLeft = millisUntilFinished;
-                        String timeLeft = renderMinsAndSecs(millisLeft);
-                        timeCounter.setText(timeLeft);
-                        if (timeLeft.equals("0:06")) {
-                            countDownFiveSecs.start();
-                        }
-                    }
-                }
-
-                @Override
-                public void onFinish() {
-                    String restTimeStrPretty = restTime + ":00";
-                    timeCounter.setText(restTimeStrPretty);
-                    currentState = findViewById(R.id.id_current_status_text);
-                    currentState.setText(R.string.rest);
-                    bellSound.start();
-                    startRest(restTime);
-                }
-            }.start();
-        }
-    }
-
-    private void startRest(int restTime) {
-
-        if(currRound == rounds) {
-            currentState.setText(getString(R.string.finish));
-            finish();
-        } else {
-            long lRestTime = restTime * 60 * 1000;
-            new CountDownTimer(lRestTime, TIME_INTERVAL) {
-
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    millisLeft = millisUntilFinished;
-                    String timeLeft = renderMinsAndSecs(millisLeft);
-                    timeCounter.setText(timeLeft);
-                    if (timeLeft.equals("0:06")) {
-                        countDownFiveSecs.start();
-                    }
-                }
-
-                @Override
-                public void onFinish() {
-                    bellSound.start();
-                    currRound++;
-                    startFight(fightTime);
-                }
-            }.start();
-        }
     }
 }
